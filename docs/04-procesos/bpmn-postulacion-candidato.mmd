@@ -1,0 +1,15 @@
+flowchart TD
+    A[Candidato consulta vacantes] --> B[Selecciona una posicion]
+    B --> C[Completa formulario de postulacion]
+    C --> D{Adjunta archivos}
+    D -- Si --> E[Enviar archivos a API externa]
+    D -- No --> F[Validar datos de postulacion]
+    E --> F
+    F --> G{Candidato ya existe globalmente}
+    G -- Si --> H[Reutilizar perfil del candidato]
+    G -- No --> I[Crear perfil global del candidato]
+    H --> J[Crear Application para la posicion]
+    I --> J
+    J --> K[Asignar etapa inicial Applied]
+    K --> L[Confirmar postulacion]
+    L --> M[Fin]

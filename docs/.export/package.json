@@ -1,0 +1,11 @@
+{
+  "name": "reclutamiento-pdf-export",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "marked": "^18.0.3",
+    "pdfkit": "^0.15.0",
+    "playwright": "^1.52.0",
+    "svg-to-pdfkit": "^0.1.8"
+  }
+}

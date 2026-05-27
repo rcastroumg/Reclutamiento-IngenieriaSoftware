@@ -1,0 +1,10 @@
+flowchart TD
+    A[Routers REST] --> B[Security Dependencies]
+    B --> C[Application Services]
+    C --> D[Repositories]
+    D --> E[ORM Models]
+    E --> F[(MySQL)]
+    C --> G[Email Provider Client]
+    C --> H[File Storage Provider Client]
+    C --> I[Notification Service]
+    C --> J[Audit and Stage History Service]

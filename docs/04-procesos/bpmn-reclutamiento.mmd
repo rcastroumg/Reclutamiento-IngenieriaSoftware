@@ -1,0 +1,20 @@
+flowchart TD
+    A[Reclutador consulta postulaciones] --> B[Selecciona Application]
+    B --> C[Revisa perfil historial y documentos]
+    C --> D{Accion requerida}
+    D -- Mover etapa --> E[Validar etapa destino]
+    D -- Enviar cuestionario --> F[Asignar cuestionario]
+    D -- Evaluar --> G[Registrar scorecard]
+    E --> H[Persistir cambio de etapa]
+    H --> I[Registrar historial]
+    I --> J{Etapa genera correo}
+    J -- No --> K[Mostrar confirmacion]
+    J -- Si --> L[Invocar API externa de correo]
+    L --> M{Correo enviado}
+    M -- Si --> K
+    M -- No --> N[Registrar fallo de notificacion]
+    N --> O[Reportar fallo sin revertir etapa]
+    O --> K
+    F --> K
+    G --> K
+    K --> P[Fin]

@@ -1,0 +1,14 @@
+flowchart TD
+    A[Reclutador inicia creacion de vacante] --> B[Ingresa datos obligatorios de posicion]
+    B --> C[Selecciona pipeline scorecard y cuestionario]
+    C --> D{Datos validos}
+    D -- No --> E[Mostrar errores de validacion]
+    E --> B
+    D -- Si --> F[Guardar posicion]
+    F --> G[Definir configuracion de publicacion]
+    G --> H{Publicar ahora}
+    H -- No --> I[Guardar como borrador]
+    H -- Si --> J[Marcar posicion como publicada]
+    I --> K[Fin]
+    J --> L[Mostrar en portal de empleo]
+    L --> K[Fin]

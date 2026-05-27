@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema SaaS de Reclutamiento — Documento Final</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --primary: #1a3a5c;
+      --primary-light: #2563a8;
+      --accent: #e07b2e;
+      --accent-light: #f59e3f;
+      --bg: #ffffff;
+      --bg-alt: #f4f7fb;
+      --text: #1e2d3d;
+      --text-muted: #4a5568;
+      --border: #cdd5e0;
+      --code-bg: #eef2f7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 3rem 4rem;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #ffffff;
+      padding: 4rem 3rem;
+      border-radius: 4px;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    .cover h1 {
+      font-size: 24pt;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      border: none;
+      color: #fff;
+    }
+    .cover .subtitle {
+      font-size: 13pt;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 2rem;
+    }
+    .cover .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem 2rem;
+      text-align: left;
+      font-size: 10pt;
+      color: rgba(255,255,255,0.9);
+      margin-top: 1.5rem;
+    }
+    .cover .meta-label { font-weight: 600; }
+    .cover hr { border-color: rgba(255,255,255,0.3); margin: 1.5rem 0; }
+    .cover .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 9pt;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── HEADINGS ── */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--primary);
+      font-weight: 700;
+      margin: 1.8rem 0 0.7rem;
+      line-height: 1.3;
+    }
+
+    /* The first H1 is used as cover — hide it in the flow */
+    .content > h1:first-child { display: none; }
+
+    h2 {
+      font-size: 16pt;
+      border-left: 5px solid var(--accent);
+      padding-left: 0.8rem;
+      margin-top: 2.5rem;
+    }
+
+    h3 {
+      font-size: 13pt;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.3rem;
+    }
+
+    h4 { font-size: 11.5pt; color: var(--primary-light); }
+
+    p { margin: 0.6rem 0; }
+
+    /* ── HORIZONTAL RULE ── */
+    hr {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* ── LISTS ── */
+    ul, ol {
+      margin: 0.5rem 0 0.5rem 1.5rem;
+    }
+    li { margin: 0.2rem 0; }
+
+    /* ── TABLES ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-size: 10pt;
+    }
+    thead {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    thead th {
+      padding: 0.55rem 0.8rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) { background: var(--bg-alt); }
+    tbody tr:hover { background: #dbe8f6; }
+    tbody td {
+      padding: 0.45rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    /* ── CODE ── */
+    code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.35rem;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 9.5pt;
+      color: var(--primary);
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.8rem 0;
+    }
+    pre code {
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-size: 9pt;
+    }
+
+    /* ── BLOCKQUOTE ── */
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: var(--bg-alt);
+      padding: 0.6rem 1rem;
+      margin: 1rem 0;
+      color: var(--text-muted);
+      font-style: italic;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ── MERMAID ── */
+    .mermaid {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* ── BOLD / STRONG ── */
+    strong { color: var(--primary); }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      body { font-size: 10pt; }
+      .page-wrapper { max-width: 100%; padding: 1rem 2rem; }
+      h2 { page-break-before: always; }
+      h2:first-of-type { page-break-before: avoid; }
+      .mermaid { page-break-inside: avoid; }
+      table { page-break-inside: avoid; }
+      .cover { page-break-after: always; border-radius: 0; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- COVER CARD -->
+    <div class="cover">
+      <div class="badge">Documento Formal de Entrega</div>
+      <h1>Sistema SaaS de Reclutamiento<br>y Portal de Empleos</h1>
+      <p class="subtitle">Documento Integral de Visión, Planificación, Requerimientos y Diseño</p>
+      <hr>
+      <div class="meta-grid">
+        <span class="meta-label">Institución:</span><span>Universidad Mariano Gálvez de Guatemala</span>
+        <span class="meta-label">Carrera:</span><span>Ingeniería en Sistemas de Información</span>
+        <span class="meta-label">Curso:</span><span>Ingeniería del Software</span>
+        <span class="meta-label">Docente:</span><span>Ing. Leonardo Cruz</span>
+        <span class="meta-label">Cliente:</span><span>Recruitment Solutions</span>
+        <span class="meta-label">Autor:</span><span>Roberto Castro</span>
+        <span class="meta-label">Versión:</span><span>1.0</span>
+        <span class="meta-label">Fecha:</span><span>09 de mayo de 2026</span>
+      </div>
+    </div>
+
+    <!-- DOCUMENT CONTENT -->
+    <div class="content">
+      <h1>Sistema SaaS de Reclutamiento y Portal de Empleos</h1>
+<h2>Documento Integral de Vision, Planificacion, Requerimientos y Diseno</h2>
+<h3>Portada de Entrega</h3>
+<p><strong>Institucion:</strong> Universidad Mariano Gálvez de Guatemala<br><strong>Facultad / Carrera:</strong> Ingeniería en Sistemas de Información<br><strong>Curso:</strong> Ingeniería del Software<br><strong>Docente:</strong> Ing. Leonardo Cruz<br><strong>Proyecto:</strong> Plataforma SaaS de Reclutamiento y Portal de Empleos<br><strong>Cliente del caso:</strong> Recruitment Solutions<br><strong>Equipo / Autor(es):</strong> Roberto Castro<br><strong>Version del documento:</strong> 1.0<br><strong>Fecha:</strong> 2026-05-09<br><strong>Estado:</strong> Documento formal de analisis, planificacion y diseno  </p>
+<hr>
+<h2>Control Documental</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Nombre del documento</td>
+<td>Documento Integral de Vision, Planificacion, Requerimientos y Diseno</td>
+</tr>
+<tr>
+<td>Proyecto</td>
+<td>Plataforma SaaS de Reclutamiento y Portal de Empleos</td>
+</tr>
+<tr>
+<td>Cliente</td>
+<td>Recruitment Solutions</td>
+</tr>
+<tr>
+<td>Version</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>Fecha</td>
+<td>2026-05-09</td>
+</tr>
+<tr>
+<td>Estado</td>
+<td>Aprobado para refinamiento y entrega formal</td>
+</tr>
+<tr>
+<td>Elaborado por</td>
+<td>[Completar autor o equipo]</td>
+</tr>
+<tr>
+<td>Revisado por</td>
+<td>[Completar revisor]</td>
+</tr>
+<tr>
+<td>Aprobado por</td>
+<td>[Completar responsable]</td>
+</tr>
+</tbody></table>
+<h2>Resumen Ejecutivo</h2>
+<p>El presente documento consolida el analisis y diseno de una plataforma SaaS orientada a la gestion de procesos de reclutamiento para multiples empresas. La solucion propuesta responde a la necesidad de centralizar la administracion de vacantes, candidatos, postulaciones, evaluaciones y comunicaciones dentro de un mismo ecosistema digital.</p>
+<p>El producto contempla una aplicacion web administrativa y un portal publico de empleos. Sin embargo, para la primera etapa del proyecto el alcance de implementacion se concentra en el backend, el cual se desarrollara con FastAPI, base de datos MySQL, autenticacion JWT e integraciones externas para correo y almacenamiento de archivos.</p>
+<p>Este documento integra vision del producto, planificacion, backlog, modelado de procesos BPMN, modelo de datos E-R, arquitectura C4 y propuesta de prototipos, dejando una base formal y coherente para la implementacion tecnica y la posterior elaboracion del entregable final en PDF.</p>
+<h2>Metodologia de Elaboracion</h2>
+<p>La construccion del documento siguio un enfoque incremental, ordenando los entregables segun sus dependencias naturales:</p>
+<ol>
+<li>Vision del producto para fijar problema, alcance, objetivos y restricciones.</li>
+<li>Planificacion y backlog para traducir el problema en trabajo priorizado.</li>
+<li>Modelado de procesos de negocio para representar el flujo operativo del reclutamiento.</li>
+<li>Modelado de datos para asegurar coherencia entre reglas del negocio y persistencia.</li>
+<li>Arquitectura C4 para representar la solucion tecnica en distintos niveles de abstraccion.</li>
+<li>Mockups funcionales para conectar la solucion tecnica con la futura experiencia de usuario.</li>
+</ol>
+<p>Esta secuencia permitio reducir ambiguedad, evitar contradicciones entre artefactos y consolidar una fuente unica de documentacion para entrega formal.</p>
+<h2>Tabla de Contenido</h2>
+<ol>
+<li>Vision del Producto</li>
+<li>Planificacion y Cronograma</li>
+<li>Requerimientos y Product Backlog</li>
+<li>Modelado de Procesos de Negocio BPMN</li>
+<li>Diagrama de Datos Modelo E-R</li>
+<li>Arquitectura del Sistema Modelo C4</li>
+<li>Prototipo y Mockups de la Aplicacion</li>
+<li>Conclusiones</li>
+<li>Recomendaciones Finales</li>
+</ol>
+<hr>
+<h2>1. Vision del Producto</h2>
+<h3>1.1 Informacion General</h3>
+<ul>
+<li>Proyecto: Plataforma SaaS de Reclutamiento y Portal de Empleos</li>
+<li>Cliente: Recruitment Solutions</li>
+<li>Version: 1.0</li>
+<li>Fecha: 2026-05-09</li>
+<li>Estado: Base para entrega formal</li>
+</ul>
+<h3>1.2 Proposito del Documento</h3>
+<p>Este documento integral consolida la vision, planificacion, requerimientos y diseno del sistema solicitado por Recruitment Solutions. Su finalidad es servir como base formal para analisis, implementacion, evaluacion academica y preparacion del entregable final en formato PDF.</p>
+<h3>1.3 Descripcion del Problema</h3>
+<p>Recruitment Solutions requiere una plataforma web que permita a multiples empresas administrar sus procesos de reclutamiento bajo un modelo SaaS. En el estado actual del problema, los procesos de captacion, seguimiento, evaluacion y comunicacion con candidatos suelen operar de manera manual, dispersa o apoyada en herramientas no integradas, generando perdida de trazabilidad, baja colaboracion entre reclutadores y poca estandarizacion de etapas.</p>
+<p>Adicionalmente, las empresas necesitan publicar vacantes, recibir postulaciones, evaluar candidatos mediante cuestionarios y scorecards, y comunicar avances del proceso a traves de correo electronico.</p>
+<h3>1.4 Oportunidad de Negocio</h3>
+<p>La solucion propuesta permitira a Recruitment Solutions ofrecer una plataforma reusable y escalable para distintas companias, monetizada mediante membresias. El sistema centralizara el proceso de reclutamiento, reducira tiempos operativos y abrira la posibilidad de evolucionar el producto hacia una solucion integral de gestion del talento.</p>
+<h3>1.5 Objetivos del Negocio</h3>
+<ol>
+<li>Comercializar una plataforma SaaS orientada a procesos de reclutamiento multiempresa.</li>
+<li>Reducir tiempos operativos en la gestion de vacantes y candidatos.</li>
+<li>Estandarizar pipelines de contratacion por empresa.</li>
+<li>Mejorar la trazabilidad del proceso de seleccion.</li>
+<li>Centralizar publicaciones, postulaciones, evaluaciones y comunicaciones.</li>
+<li>Permitir crecimiento futuro del producto hacia una solucion integral de reclutamiento.</li>
+</ol>
+<h3>1.6 Objetivos del Sistema</h3>
+<ol>
+<li>Permitir que usuarios autenticados operen segun su rol y compania activa.</li>
+<li>Soportar operacion multiempresa para un mismo usuario.</li>
+<li>Gestionar posiciones vacantes con atributos configurables.</li>
+<li>Registrar candidatos globales y multiples postulaciones por posicion.</li>
+<li>Administrar pipelines y etapas por compania.</li>
+<li>Asignar cuestionarios y scorecards durante el proceso.</li>
+<li>Automatizar envios de correo por cambio de etapa mediante una API externa.</li>
+<li>Permitir publicacion de vacantes en un portal de empleo.</li>
+<li>Exponer una capa de APIs REST como entregable principal de la primera fase.</li>
+</ol>
+<h3>1.7 Stakeholders</h3>
+<ol>
+<li>Recruitment Solutions, como propietario del producto.</li>
+<li>Empresas clientes, como usuarias de la plataforma.</li>
+<li>Administradores de compania.</li>
+<li>Reclutadores.</li>
+<li>Aspirantes o candidatos.</li>
+<li>Equipo de desarrollo.</li>
+<li>Equipo academico o evaluador.</li>
+</ol>
+<h3>1.8 Usuarios y Necesidades</h3>
+<p><strong>Administrador</strong><br>Necesita gestionar companias, usuarios, pipelines, cuestionarios, scorecards y configuraciones generales.</p>
+<p><strong>Reclutador</strong><br>Necesita crear y publicar posiciones, revisar candidatos, mover postulaciones entre etapas, adjuntar documentos y ejecutar acciones del proceso.</p>
+<p><strong>Aspirante</strong><br>Necesita consultar vacantes publicadas, completar formularios de postulacion y recibir comunicaciones del proceso.</p>
+<h3>1.9 Alcance del Producto</h3>
+<p>La solucion completa contempla una aplicacion web para administracion interna del reclutamiento y un portal publico de empleos. No obstante, en la primera etapa del proyecto se implementara unicamente el backend mediante APIs REST, dejando el frontend definido a nivel funcional, arquitectonico y de mockups.</p>
+<h4>1.9.1 Alcance funcional incluido</h4>
+<ol>
+<li>Gestion de companias.</li>
+<li>Gestion de usuarios y membresias multiempresa.</li>
+<li>Gestion de equipos de reclutamiento.</li>
+<li>Gestion de pipelines y etapas.</li>
+<li>Gestion de cuestionarios.</li>
+<li>Gestion de scorecards.</li>
+<li>Creacion, consulta y actualizacion de posiciones.</li>
+<li>Consulta y actualizacion de candidatos.</li>
+<li>Registro de postulaciones por posicion.</li>
+<li>Movimiento de candidatos a traves de etapas.</li>
+<li>Envio sincronico de correos por API externa con reporte de fallo sin revertir el cambio principal.</li>
+<li>Gestion de documentos a traves de un servicio externo con acceso protegido por Bearer token.</li>
+<li>Publicacion de posiciones para portal de empleo.</li>
+</ol>
+<h4>1.9.2 Alcance funcional no incluido en la primera fase</h4>
+<ol>
+<li>Implementacion completa del frontend React.</li>
+<li>Exportacion avanzada de reportes gerenciales.</li>
+<li>Integraciones con bolsas de empleo externas.</li>
+<li>Automatizacion asincrona mediante colas o workers.</li>
+<li>Analitica avanzada o inteligencia de reclutamiento.</li>
+</ol>
+<h3>1.10 Caracteristicas principales del producto</h3>
+<ol>
+<li>Plataforma SaaS multiempresa.</li>
+<li>JWT para autenticacion.</li>
+<li>Usuarios con acceso a multiples companias.</li>
+<li>Candidatos globales con multiples postulaciones.</li>
+<li>Pipelines configurables por compania.</li>
+<li>Pipeline default: Applied, Feedback, Interviewing, Made Offer, Disqualified, Hired.</li>
+<li>Posiciones con atributos estructurados y atributos personalizados seguros.</li>
+<li>Cuestionarios y scorecards para evaluacion.</li>
+<li>Correos via servicio externo.</li>
+<li>Archivos via servicio externo.</li>
+</ol>
+<h3>1.11 Reglas del Negocio Relevantes</h3>
+<ol>
+<li>Un usuario puede operar en multiples companias.</li>
+<li>La autorizacion debe validarse contra la compania activa.</li>
+<li>El candidato existe globalmente en el sistema.</li>
+<li>Un candidato puede aplicar a multiples posiciones.</li>
+<li>El avance por etapas pertenece a la postulacion y no al candidato global.</li>
+<li>Una posicion pertenece a una compania.</li>
+<li>Cada posicion puede asociarse a un pipeline, scorecard y cuestionario por defecto.</li>
+<li>Si falla el envio del correo durante un cambio de etapa, el cambio principal debe persistirse y reportarse el fallo.</li>
+<li>Los archivos deben descargarse mediante autenticacion Bearer y no mediante URL publica.</li>
+<li>Los atributos personalizados marcados como <code>secure</code> deben cifrarse en reposo.</li>
+</ol>
+<h3>1.12 Restricciones Tecnicas</h3>
+<ol>
+<li>Backend con FastAPI.</li>
+<li>Frontend previsto con React y Tailwind.</li>
+<li>Base de datos MySQL.</li>
+<li>Autenticacion con JWT.</li>
+<li>Integraciones de correo y archivos mediante APIs externas.</li>
+<li>Entrega inicial centrada en backend.</li>
+</ol>
+<h3>1.13 Riesgos Iniciales</h3>
+<ol>
+<li>Dependencia operativa de APIs externas para correo y archivos.</li>
+<li>Latencia adicional por envio sincronico de correo.</li>
+<li>Riesgo de modelar incorrectamente candidato y postulacion si no se mantiene la separacion del dominio.</li>
+<li>Riesgo de seguridad si no se implementa correctamente el cifrado de atributos seguros.</li>
+<li>Riesgo de crecimiento del alcance si se intenta implementar frontend completo en esta fase.</li>
+</ol>
+<hr>
+<h2>2. Planificacion y Cronograma</h2>
+<h3>2.1 Objetivo de la Planificacion</h3>
+<p>Definir una secuencia de trabajo realista para el analisis, diseno e implementacion inicial del sistema, priorizando la capa backend, la calidad del modelado del dominio y la produccion de los entregables documentales.</p>
+<h3>2.2 Estrategia de Trabajo</h3>
+<p>Se propone una planificacion iterativa por fases. Las primeras fases consolidan analisis y diseno; las siguientes se enfocan en implementacion del backend y preparacion del frontend para una etapa posterior.</p>
+<h3>2.3 Fases del Proyecto</h3>
+<table>
+<thead>
+<tr>
+<th>Fase</th>
+<th>Nombre</th>
+<th>Duracion estimada</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>F1</td>
+<td>Analisis y vision del producto</td>
+<td>1 semana</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>Requerimientos detallados y backlog</td>
+<td>1 semana</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>Diseno del negocio y arquitectura</td>
+<td>1 semana</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>Infraestructura base backend</td>
+<td>1 semana</td>
+</tr>
+<tr>
+<td>F5</td>
+<td>Modulos core de reclutamiento</td>
+<td>2 semanas</td>
+</tr>
+<tr>
+<td>F6</td>
+<td>Evaluacion e integraciones externas</td>
+<td>2 semanas</td>
+</tr>
+<tr>
+<td>F7</td>
+<td>Validacion, documentacion final y cierre</td>
+<td>1 semana</td>
+</tr>
+</tbody></table>
+<h3>2.4 Actividades por Fase</h3>
+<h4>F1 Analisis y vision del producto</h4>
+<ol>
+<li>Revisar requerimientos fuente.</li>
+<li>Consolidar decisiones de negocio y tecnologia.</li>
+<li>Elaborar documento de vision.</li>
+<li>Definir alcance de la primera etapa.</li>
+</ol>
+<h4>F2 Requerimientos detallados y backlog</h4>
+<ol>
+<li>Identificar temas, epicas e historias.</li>
+<li>Estimar historias de usuario.</li>
+<li>Definir criterios de aceptacion.</li>
+<li>Priorizar MVP.</li>
+</ol>
+<h4>F3 Diseno del negocio y arquitectura</h4>
+<ol>
+<li>Modelar procesos BPMN.</li>
+<li>Construir modelo E-R.</li>
+<li>Elaborar arquitectura C4.</li>
+<li>Definir contratos API a alto nivel.</li>
+</ol>
+<h4>F4 Infraestructura base backend</h4>
+<ol>
+<li>Inicializar proyecto FastAPI.</li>
+<li>Configurar MySQL y migraciones.</li>
+<li>Configurar seguridad JWT.</li>
+<li>Implementar manejo de errores y configuracion.</li>
+</ol>
+<h4>F5 Modulos core de reclutamiento</h4>
+<ol>
+<li>Companias y membresias.</li>
+<li>Pipelines y etapas.</li>
+<li>Posiciones.</li>
+<li>Candidatos.</li>
+<li>Postulaciones e historial de etapas.</li>
+</ol>
+<h4>F6 Evaluacion e integraciones externas</h4>
+<ol>
+<li>Cuestionarios y respuestas.</li>
+<li>Scorecards.</li>
+<li>Integracion de almacenamiento de archivos.</li>
+<li>Integracion de correo sincronico.</li>
+<li>Logs de notificacion.</li>
+</ol>
+<h4>F7 Validacion, documentacion final y cierre</h4>
+<ol>
+<li>Revisar cobertura funcional del backend.</li>
+<li>Consolidar documentacion.</li>
+<li>Preparar entregable formal.</li>
+<li>Revisar riesgos abiertos y siguientes pasos.</li>
+</ol>
+<h3>2.5 Dependencias Clave</h3>
+<ol>
+<li>El backlog depende del documento de vision.</li>
+<li>BPMN, E-R y C4 dependen de reglas del negocio y backlog ya consolidados.</li>
+<li>La implementacion de postulaciones depende del modelado correcto entre <code>Candidate</code> y <code>Application</code>.</li>
+<li>La integracion de correo depende de la definicion de eventos por etapa.</li>
+<li>La integracion documental depende de la especificacion de autorizacion Bearer y politica de descarga.</li>
+</ol>
+<h3>2.6 Cronograma Tentativo</h3>
+<table>
+<thead>
+<tr>
+<th>Semana</th>
+<th>Actividades principales</th>
+<th>Entregables</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Vision del producto y alcance</td>
+<td>Documento de Vision</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Historias, backlog, criterios, estimacion</td>
+<td>Product Backlog</td>
+</tr>
+<tr>
+<td>3</td>
+<td>BPMN, E-R, C4, mockups</td>
+<td>Diseno del negocio y arquitectura</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Base FastAPI, MySQL, JWT</td>
+<td>Infraestructura inicial</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Companias, pipelines, posiciones</td>
+<td>Modulos core I</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Candidatos, postulaciones, etapas</td>
+<td>Modulos core II</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Cuestionarios, scorecards, archivos, correo</td>
+<td>Integraciones y evaluacion</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Validacion, ajustes y documento final</td>
+<td>Entrega consolidada</td>
+</tr>
+</tbody></table>
+<h3>2.7 Hitos</h3>
+<ol>
+<li>H1 Documento de vision aprobado.</li>
+<li>H2 Backlog y criterios de aceptacion aprobados.</li>
+<li>H3 Diseno BPMN, E-R y C4 completado.</li>
+<li>H4 Base tecnica del backend operativa.</li>
+<li>H5 Gestion de posiciones y postulaciones funcional.</li>
+<li>H6 Integraciones externas operativas.</li>
+<li>H7 Documentacion final consolidada.</li>
+</ol>
+<h3>2.8 Riesgos de Planificacion y Mitigacion</h3>
+<p><strong>Riesgos</strong></p>
+<ol>
+<li>Retrabajo por cambios de alcance.</li>
+<li>Retrasos por dependencia de APIs externas.</li>
+<li>Retrasos por ajustes al modelo de datos.</li>
+<li>Riesgo de sobrecarga si se intenta implementar frontend completo en la misma etapa.</li>
+</ol>
+<p><strong>Medidas de mitigacion</strong></p>
+<ol>
+<li>Mantener backlog priorizado por MVP.</li>
+<li>Disenar adaptadores desacoplados para servicios externos.</li>
+<li>Validar pronto el modelo de dominio y el E-R.</li>
+<li>Proteger el alcance de la primera fase enfocandolo en backend.</li>
+</ol>
+<hr>
+<h2>3. Requerimientos y Product Backlog</h2>
+<h3>3.1 Enfoque de Priorizacion</h3>
+<p>El backlog se organiza por temas, epicas, historias de usuario y tareas tecnicas. La prioridad se clasifica en Alta, Media y Baja. La estimacion se expresa en Story Points utilizando una escala tipo Fibonacci: 1, 2, 3, 5, 8, 13.</p>
+<h3>3.2 Temas del Producto</h3>
+<ol>
+<li>Seguridad y acceso.</li>
+<li>Gestion organizacional.</li>
+<li>Configuracion del proceso de reclutamiento.</li>
+<li>Gestion de posiciones vacantes.</li>
+<li>Gestion de candidatos y postulaciones.</li>
+<li>Evaluacion de candidatos.</li>
+<li>Integraciones externas.</li>
+<li>Portal de empleo.</li>
+</ol>
+<h3>3.3 Product Backlog</h3>
+<h4>Tema 1. Seguridad y acceso</h4>
+<h5>Epica 1.1 Autenticacion y contexto multiempresa</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-01</td>
+<td>Como usuario quiero iniciar sesion con credenciales seguras para acceder al sistema segun mis permisos.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-02</td>
+<td>Como usuario quiero ver las companias a las que pertenezco para operar en el contexto correcto.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-03</td>
+<td>Como usuario quiero seleccionar mi compania activa para ejecutar acciones en el contexto adecuado.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-04</td>
+<td>Como administrador quiero que cada endpoint valide mi membresia a la compania activa para proteger la informacion.</td>
+<td>Alta</td>
+<td>8</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Implementar emision y validacion de JWT.</li>
+<li>Implementar refresh token.</li>
+<li>Crear dependencia de FastAPI para compania activa.</li>
+<li>Implementar control de acceso por rol y membresia.</li>
+</ol>
+<h4>Tema 2. Gestion organizacional</h4>
+<h5>Epica 2.1 Gestion de companias y equipos</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-05</td>
+<td>Como administrador quiero consultar la informacion de una compania para administrar su configuracion.</td>
+<td>Alta</td>
+<td>2</td>
+</tr>
+<tr>
+<td>HU-06</td>
+<td>Como usuario quiero listar las companias disponibles para mi cuenta para cambiar de contexto facilmente.</td>
+<td>Alta</td>
+<td>2</td>
+</tr>
+<tr>
+<td>HU-07</td>
+<td>Como administrador quiero agrupar reclutadores en equipos para distribuir procesos de seleccion.</td>
+<td>Media</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Modelar <code>companies</code>, <code>memberships</code>, <code>teams</code> y <code>team_members</code>.</li>
+<li>Exponer endpoints de consulta de companias.</li>
+<li>Exponer CRUD basico de equipos.</li>
+</ol>
+<h4>Tema 3. Configuracion del proceso de reclutamiento</h4>
+<h5>Epica 3.1 Pipelines y etapas</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-08</td>
+<td>Como administrador quiero definir pipelines para adaptar el proceso de seleccion de mi empresa.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-09</td>
+<td>Como reclutador quiero consultar las etapas de un pipeline para operar correctamente sobre una vacante.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-10</td>
+<td>Como sistema quiero disponer de un pipeline default con etapas base para inicializar nuevas posiciones.</td>
+<td>Alta</td>
+<td>2</td>
+</tr>
+</tbody></table>
+<h5>Epica 3.2 Cuestionarios y scorecards</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-11</td>
+<td>Como administrador quiero crear cuestionarios predefinidos para evaluar candidatos.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-12</td>
+<td>Como administrador quiero configurar scorecards para estandarizar evaluaciones.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-13</td>
+<td>Como reclutador quiero asignar cuestionarios a candidatos durante el proceso de seleccion.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Crear modelo de pipelines y stages.</li>
+<li>Configurar pipeline default.</li>
+<li>Modelar cuestionarios, preguntas, scorecards y criterios.</li>
+<li>Exponer endpoints de consulta y asignacion.</li>
+</ol>
+<h4>Tema 4. Gestion de posiciones vacantes</h4>
+<h5>Epica 4.1 Creacion y administracion de posiciones</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-14</td>
+<td>Como reclutador quiero crear una posicion con datos estructurados para iniciar un proceso de reclutamiento.</td>
+<td>Alta</td>
+<td>8</td>
+</tr>
+<tr>
+<td>HU-15</td>
+<td>Como reclutador quiero actualizar una posicion para reflejar cambios del proceso o de la vacante.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-16</td>
+<td>Como reclutador quiero cambiar el estado de una posicion para controlar su ciclo de vida.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-17</td>
+<td>Como reclutador quiero listar posiciones filtrando por estado para gestionar la carga operativa.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-18</td>
+<td>Como administrador quiero definir atributos personalizados por posicion para cubrir necesidades particulares de negocio.</td>
+<td>Media</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Modelar <code>positions</code> y <code>position_custom_attributes</code>.</li>
+<li>Implementar validacion de enums para <code>type</code>, <code>experience</code> y <code>education</code>.</li>
+<li>Implementar cifrado en reposo para atributos <code>secure</code>.</li>
+<li>Crear endpoints de consulta, creacion y actualizacion.</li>
+</ol>
+<h4>Tema 5. Gestion de candidatos y postulaciones</h4>
+<h5>Epica 5.1 Registro y mantenimiento de candidatos</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-19</td>
+<td>Como reclutador quiero consultar un candidato global para reutilizar su perfil en distintos procesos.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-20</td>
+<td>Como reclutador quiero actualizar la informacion base del candidato para mantener su perfil vigente.</td>
+<td>Media</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-21</td>
+<td>Como reclutador quiero registrar informacion de educacion del candidato para enriquecer su perfil.</td>
+<td>Media</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<h5>Epica 5.2 Postulaciones y seguimiento</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-22</td>
+<td>Como reclutador quiero agregar un candidato a una posicion para gestionar su postulacion.</td>
+<td>Alta</td>
+<td>8</td>
+</tr>
+<tr>
+<td>HU-23</td>
+<td>Como reclutador quiero listar candidatos de una posicion para dar seguimiento a mis procesos.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-24</td>
+<td>Como reclutador quiero mover una postulacion entre etapas del pipeline para reflejar el avance del candidato.</td>
+<td>Alta</td>
+<td>8</td>
+</tr>
+<tr>
+<td>HU-25</td>
+<td>Como reclutador quiero mover un candidato de una posicion a otra cuando corresponda operativamente.</td>
+<td>Media</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-26</td>
+<td>Como sistema quiero registrar historial de etapas por postulacion para asegurar trazabilidad.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Separar entidades <code>candidates</code> y <code>applications</code>.</li>
+<li>Modelar historial de etapas.</li>
+<li>Implementar reglas de transicion de etapas.</li>
+<li>Implementar endpoints de consulta y movimiento.</li>
+</ol>
+<h4>Tema 6. Evaluacion de candidatos</h4>
+<h5>Epica 6.1 Respuestas y scorecards</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-27</td>
+<td>Como reclutador quiero enviar un cuestionario a un candidato para continuar su evaluacion.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-28</td>
+<td>Como candidato quiero responder un cuestionario para avanzar en mi proceso de seleccion.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-29</td>
+<td>Como reclutador quiero registrar scorecards para evaluar objetivamente a un candidato.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-30</td>
+<td>Como reclutador quiero consultar cuestionarios asignados a una postulacion para verificar su estado.</td>
+<td>Media</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Modelar asignaciones y respuestas.</li>
+<li>Crear endpoints de envio y guardado de respuestas.</li>
+<li>Crear endpoints de scorecards.</li>
+</ol>
+<h4>Tema 7. Integraciones externas</h4>
+<h5>Epica 7.1 Gestion documental y notificaciones</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-31</td>
+<td>Como reclutador quiero adjuntar documentos a un candidato para consolidar informacion de soporte.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-32</td>
+<td>Como reclutador quiero adjuntar el curriculum de un candidato existente para completar su expediente.</td>
+<td>Alta</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-33</td>
+<td>Como sistema quiero descargar archivos solo para usuarios autenticados y autorizados para proteger informacion sensible.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-34</td>
+<td>Como sistema quiero enviar correos sincronicos al cambiar ciertas etapas para comunicar el avance del proceso.</td>
+<td>Alta</td>
+<td>8</td>
+</tr>
+<tr>
+<td>HU-35</td>
+<td>Como reclutador quiero recibir aviso cuando falle el correo pero sin perder el cambio principal del proceso.</td>
+<td>Alta</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Crear adaptador de almacenamiento externo.</li>
+<li>Crear adaptador de correo externo.</li>
+<li>Implementar logs de notificacion.</li>
+<li>Asegurar que el backend controle la descarga de archivos mediante Bearer token.</li>
+</ol>
+<h4>Tema 8. Portal de empleo</h4>
+<h5>Epica 8.1 Publicacion y postulacion publica</h5>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Historia de Usuario</th>
+<th>Prioridad</th>
+<th>SP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HU-36</td>
+<td>Como reclutador quiero publicar una posicion para que sea visible en el portal de empleo.</td>
+<td>Media</td>
+<td>5</td>
+</tr>
+<tr>
+<td>HU-37</td>
+<td>Como aspirante quiero ver vacantes publicadas para decidir a cuales aplicar.</td>
+<td>Media</td>
+<td>3</td>
+</tr>
+<tr>
+<td>HU-38</td>
+<td>Como aspirante quiero completar un formulario de postulacion para aplicar a una vacante.</td>
+<td>Media</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p>Tareas tecnicas asociadas:</p>
+<ol>
+<li>Definir contrato de publicacion de vacante.</li>
+<li>Definir datos minimos del formulario publico.</li>
+<li>Exponer endpoints publicos controlados para portal de empleo.</li>
+</ol>
+<h3>3.4 Resumen de Priorizacion MVP</h3>
+<p>Para el MVP backend de la primera etapa se priorizan las siguientes historias:</p>
+<ol>
+<li>HU-01 a HU-04.</li>
+<li>HU-05 y HU-06.</li>
+<li>HU-08 a HU-18.</li>
+<li>HU-19 a HU-35.</li>
+</ol>
+<p>Las historias HU-36 a HU-38 quedan como parte del diseno funcional y de una posible siguiente ola de implementacion si el alcance academico lo permite.</p>
+<h3>3.5 Historias Priorizadas y Criterios de Aceptacion</h3>
+<h4>HU-01 Iniciar sesion</h4>
+<p>Como usuario quiero iniciar sesion con mis credenciales para acceder a la plataforma segun mis permisos.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>Dado un usuario valido, cuando envia credenciales correctas, entonces el sistema devuelve un JWT valido.</li>
+<li>Dado un usuario invalido, cuando envia credenciales incorrectas, entonces el sistema rechaza la autenticacion.</li>
+<li>Dado un usuario inactivo, cuando intenta iniciar sesion, entonces el sistema bloquea el acceso.</li>
+</ol>
+<h4>HU-03 Seleccionar compania activa</h4>
+<p>Como usuario quiero seleccionar la compania activa para operar en el contexto correcto.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>Dado un usuario con multiples membresias, cuando consulta sus companias, entonces el sistema devuelve solo aquellas a las que pertenece.</li>
+<li>Dado un usuario con membresia activa, cuando envia una compania valida en el contexto de la solicitud, entonces el sistema permite operar en dicha compania.</li>
+<li>Dado un usuario sin membresia sobre una compania, cuando intenta usarla como contexto, entonces el sistema rechaza la operacion.</li>
+</ol>
+<h4>HU-14 Crear posicion</h4>
+<p>Como reclutador quiero crear una posicion con campos obligatorios y configuraciones asociadas para iniciar un proceso de reclutamiento.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>La posicion debe requerir como minimo <code>name</code>, <code>description</code>, <code>type</code> y <code>location</code>.</li>
+<li><code>type</code> solo acepta los valores permitidos por el negocio.</li>
+<li><code>experience</code> y <code>education</code> deben validarse contra sus catalogos definidos.</li>
+<li>Si se envian <code>custom_attributes</code>, cada atributo debe incluir <code>name</code>, <code>value</code> y <code>secure</code>.</li>
+<li>Si <code>secure</code> es verdadero, el valor debe persistirse cifrado.</li>
+</ol>
+<h4>HU-17 Listar posiciones por estado</h4>
+<p>Como reclutador quiero listar posiciones filtrando por estado para administrar mis vacantes activas y cerradas.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>El endpoint debe permitir filtrar por estado.</li>
+<li>Solo deben devolverse posiciones de la compania activa.</li>
+<li>La respuesta debe incluir informacion resumida util para listado.</li>
+</ol>
+<h4>HU-22 Agregar candidato a una posicion</h4>
+<p>Como reclutador quiero agregar un candidato a una posicion para crear una postulacion y darle seguimiento.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>Si el candidato ya existe globalmente, el sistema debe reutilizarlo.</li>
+<li>Si el candidato no existe, el sistema debe permitir crearlo y asociarlo a la postulacion.</li>
+<li>La postulacion debe quedar ligada a la posicion y a la compania correspondiente.</li>
+<li>La postulacion debe iniciar en la etapa inicial del pipeline configurado.</li>
+</ol>
+<h4>HU-24 Mover postulacion entre etapas</h4>
+<p>Como reclutador quiero mover una postulacion entre etapas para reflejar el avance del candidato.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>El sistema debe validar que la etapa destino pertenezca al pipeline de la posicion.</li>
+<li>El sistema debe registrar la transicion en historial.</li>
+<li>Si la etapa activa una notificacion, el sistema debe intentar enviarla sincronamente.</li>
+<li>Si el correo falla, el cambio de etapa debe persistirse y el fallo debe registrarse.</li>
+</ol>
+<h4>HU-27 Enviar cuestionario</h4>
+<p>Como reclutador quiero enviar un cuestionario a una postulacion para recopilar informacion adicional del candidato.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>Solo pueden asignarse cuestionarios disponibles para la compania activa.</li>
+<li>La asignacion debe quedar registrada con estado inicial.</li>
+<li>El sistema debe permitir recuperar cuestionarios asignados a la postulacion.</li>
+</ol>
+<h4>HU-29 Registrar scorecard</h4>
+<p>Como reclutador quiero registrar scorecards para evaluar a un candidato de forma objetiva.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>La evaluacion debe asociarse a una postulacion especifica.</li>
+<li>Debe registrarse el evaluador que ingreso la scorecard.</li>
+<li>La respuesta debe permitir almacenar puntaje total y detalle por criterio.</li>
+</ol>
+<h4>HU-31 Adjuntar documentos</h4>
+<p>Como reclutador quiero adjuntar documentos a un candidato para consolidar informacion del proceso.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>El backend debe enviar el archivo al servicio externo de almacenamiento.</li>
+<li>Solo debe persistirse la referencia al archivo externo y sus metadatos necesarios.</li>
+<li>El sistema debe validar autenticacion y autorizacion para consultar documentos.</li>
+</ol>
+<h4>HU-33 Descargar archivos con acceso protegido</h4>
+<p>Como sistema quiero permitir la descarga de archivos solo a usuarios autenticados y autorizados para proteger informacion sensible.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>La descarga debe requerir Bearer token.</li>
+<li>El sistema debe validar membresia y permisos antes de entregar el recurso.</li>
+<li>El servicio no debe exponer URLs publicas directas sin control.</li>
+</ol>
+<h4>HU-34 Enviar correos por cambio de etapa</h4>
+<p>Como sistema quiero enviar correos sincronicos al ocurrir eventos de etapa para notificar al candidato.</p>
+<p><strong>Criterios de aceptacion</strong></p>
+<ol>
+<li>Deben existir plantillas o tipos de notificacion para Interviewing, Feedback, Made Offer y Hired.</li>
+<li>El sistema debe invocar la API externa de correo en el flujo de negocio.</li>
+<li>Si la API responde error, el sistema debe registrar el incidente y reportarlo sin revertir el cambio principal.</li>
+</ol>
+<h3>3.6 Observaciones de Modelado del Backlog</h3>
+<ol>
+<li>Las historias relacionadas con etapas, scorecards y cuestionarios se aplican sobre <code>Application</code>, no sobre <code>Candidate</code> como entidad global.</li>
+<li>Los campos <code>company_id</code> y <code>position_id</code> listados en el requerimiento del candidato deben interpretarse como contexto de la postulacion.</li>
+<li>La capa REST final debe normalizar ciertas rutas del enunciado para representar correctamente el dominio.</li>
+</ol>
+<hr>
+<h2>4. Modelado de Procesos de Negocio BPMN</h2>
+<h3>4.1 Objetivo</h3>
+<p>Documentar los procesos centrales del negocio asociados al sistema de reclutamiento SaaS, identificando actores, flujo principal, puntos de decision e integraciones externas. El modelado se presenta en forma textual y mediante diagramas Mermaid con enfoque BPMN simplificado.</p>
+<h3>4.2 Procesos Modelados</h3>
+<ol>
+<li>Creacion y publicacion de vacante.</li>
+<li>Postulacion de candidato.</li>
+<li>Gestion del pipeline de seleccion.</li>
+</ol>
+<h3>4.3 Actores Involucrados</h3>
+<ol>
+<li>Administrador.</li>
+<li>Reclutador.</li>
+<li>Candidato.</li>
+<li>Sistema de reclutamiento.</li>
+<li>API externa de correo.</li>
+<li>API externa de archivos.</li>
+</ol>
+<h3>4.4 Proceso de Creacion y Publicacion de Vacante</h3>
+<p>El reclutador crea una posicion definiendo atributos obligatorios, pipeline, scorecard, cuestionario y configuracion de publicacion. Posteriormente cambia el estado o publica la vacante para exponerla en el portal de empleo.</p>
+<div class="mermaid">flowchart TD
+    A[Reclutador inicia creacion de vacante] --&gt; B[Ingresa datos obligatorios de posicion]
+    B --&gt; C[Selecciona pipeline scorecard y cuestionario]
+    C --&gt; D{Datos validos}
+    D -- No --&gt; E[Mostrar errores de validacion]
+    E --&gt; B
+    D -- Si --&gt; F[Guardar posicion]
+    F --&gt; G[Definir configuracion de publicacion]
+    G --&gt; H{Publicar ahora}
+    H -- No --&gt; I[Guardar como borrador]
+    H -- Si --&gt; J[Marcar posicion como publicada]
+    I --&gt; K[Fin]
+    J --&gt; L[Mostrar en portal de empleo]
+    L --&gt; K[Fin]</div><h3>4.5 Proceso de Postulacion de Candidato</h3>
+<p>Un candidato consulta una vacante publicada, completa un formulario, adjunta informacion y el sistema registra o reutiliza su perfil global, generando una postulacion asociada a la posicion y la compania.</p>
+<div class="mermaid">flowchart TD
+    A[Candidato consulta vacantes] --&gt; B[Selecciona una posicion]
+    B --&gt; C[Completa formulario de postulacion]
+    C --&gt; D{Adjunta archivos}
+    D -- Si --&gt; E[Enviar archivos a API externa]
+    D -- No --&gt; F[Validar datos de postulacion]
+    E --&gt; F
+    F --&gt; G{Candidato ya existe globalmente}
+    G -- Si --&gt; H[Reutilizar perfil del candidato]
+    G -- No --&gt; I[Crear perfil global del candidato]
+    H --&gt; J[Crear Application para la posicion]
+    I --&gt; J
+    J --&gt; K[Asignar etapa inicial Applied]
+    K --&gt; L[Confirmar postulacion]
+    L --&gt; M[Fin]</div><h3>4.6 Proceso de Gestion del Pipeline de Seleccion</h3>
+<p>El reclutador revisa una postulacion, la mueve entre etapas, asigna cuestionarios, registra scorecards y el sistema intenta enviar correos sincronicos en etapas configuradas. Si el correo falla, el cambio del negocio se mantiene y se registra el incidente.</p>
+<div class="mermaid">flowchart TD
+    A[Reclutador consulta postulaciones] --&gt; B[Selecciona Application]
+    B --&gt; C[Revisa perfil historial y documentos]
+    C --&gt; D{Accion requerida}
+    D -- Mover etapa --&gt; E[Validar etapa destino]
+    D -- Enviar cuestionario --&gt; F[Asignar cuestionario]
+    D -- Evaluar --&gt; G[Registrar scorecard]
+    E --&gt; H[Persistir cambio de etapa]
+    H --&gt; I[Registrar historial]
+    I --&gt; J{Etapa genera correo}
+    J -- No --&gt; K[Mostrar confirmacion]
+    J -- Si --&gt; L[Invocar API externa de correo]
+    L --&gt; M{Correo enviado}
+    M -- Si --&gt; K
+    M -- No --&gt; N[Registrar fallo de notificacion]
+    N --&gt; O[Reportar fallo sin revertir etapa]
+    O --&gt; K
+    F --&gt; K
+    G --&gt; K
+    K --&gt; P[Fin]</div><h3>4.7 Observaciones Relevantes</h3>
+<ol>
+<li>El cambio de etapa pertenece a la postulacion y no al candidato global.</li>
+<li>Las notificaciones por correo son sincronicas, pero su fallo no revierte la operacion principal.</li>
+<li>La gestion documental depende de un servicio externo y el acceso debe protegerse con Bearer token.</li>
+<li>Los procesos fueron modelados para apoyar el diseno del backend y del portal de empleo, aunque la implementacion inicial sea backend only.</li>
+</ol>
+<hr>
+<h2>5. Diagrama de Datos Modelo E-R</h2>
+<h3>5.1 Objetivo</h3>
+<p>Describir el modelo conceptual de datos del sistema de reclutamiento, identificando entidades principales, relaciones y decisiones clave de modelado para soportar un SaaS multiempresa con candidatos globales y multiples postulaciones.</p>
+<h3>5.2 Decision Central del Modelo</h3>
+<p>La decision de modelado mas importante es separar <code>Candidate</code> de <code>Application</code>.</p>
+<ol>
+<li><code>Candidate</code> representa a la persona como entidad global del sistema.</li>
+<li><code>Application</code> representa la postulacion del candidato a una posicion concreta dentro de una compania.</li>
+</ol>
+<p>Esta separacion permite que un mismo candidato aplique a multiples posiciones y evita mezclar el perfil global con el estado de un proceso especifico.</p>
+<h3>5.3 Entidades Principales</h3>
+<h4>Seguridad y organizacion</h4>
+<ol>
+<li><code>User</code></li>
+<li><code>Company</code></li>
+<li><code>UserCompanyMembership</code></li>
+<li><code>Team</code></li>
+<li><code>TeamMember</code></li>
+</ol>
+<h4>Configuracion de reclutamiento</h4>
+<ol start="6">
+<li><code>Pipeline</code></li>
+<li><code>PipelineStage</code></li>
+<li><code>Questionnaire</code></li>
+<li><code>QuestionnaireQuestion</code></li>
+<li><code>ScorecardTemplate</code></li>
+<li><code>ScorecardCriterion</code></li>
+</ol>
+<h4>Operacion del reclutamiento</h4>
+<ol start="12">
+<li><code>Position</code></li>
+<li><code>PositionCustomAttribute</code></li>
+<li><code>Candidate</code></li>
+<li><code>CandidateEducation</code></li>
+<li><code>CandidateWorkHistory</code></li>
+<li><code>Application</code></li>
+<li><code>ApplicationStageHistory</code></li>
+</ol>
+<h4>Evaluacion e integraciones</h4>
+<ol start="19">
+<li><code>QuestionnaireAssignment</code></li>
+<li><code>QuestionnaireResponse</code></li>
+<li><code>ApplicationScorecard</code></li>
+<li><code>ApplicationScorecardItem</code></li>
+<li><code>ApplicationDocument</code></li>
+<li><code>NotificationLog</code></li>
+</ol>
+<h3>5.4 Relaciones Clave</h3>
+<ol>
+<li>Un <code>User</code> puede pertenecer a multiples <code>Company</code> mediante <code>UserCompanyMembership</code>.</li>
+<li>Una <code>Company</code> puede tener multiples <code>Pipeline</code>, <code>Questionnaire</code>, <code>ScorecardTemplate</code>, <code>Team</code> y <code>Position</code>.</li>
+<li>Un <code>Pipeline</code> posee multiples <code>PipelineStage</code>.</li>
+<li>Una <code>Position</code> pertenece a una <code>Company</code> y referencia un <code>Pipeline</code>.</li>
+<li>Una <code>Position</code> puede tener multiples <code>Application</code>.</li>
+<li>Un <code>Candidate</code> puede tener multiples <code>Application</code>.</li>
+<li>Una <code>Application</code> referencia su <code>PipelineStage</code> actual.</li>
+<li>Una <code>Application</code> registra multiples entradas en <code>ApplicationStageHistory</code>.</li>
+<li>Una <code>Application</code> puede tener multiples <code>QuestionnaireAssignment</code>, <code>ApplicationScorecard</code> y <code>ApplicationDocument</code>.</li>
+</ol>
+<h3>5.5 Reglas de Integridad</h3>
+<ol>
+<li>La etapa actual de una <code>Application</code> debe pertenecer al pipeline de la <code>Position</code> asociada.</li>
+<li>Solo un usuario con membresia valida puede operar sobre datos de la compania activa.</li>
+<li>Una <code>Application</code> no debe existir sin <code>Candidate</code>, <code>Position</code> y <code>Company</code> validos.</li>
+<li>Los atributos personalizados con bandera <code>secure</code> deben persistirse cifrados.</li>
+<li>Los documentos solo deben exponer referencias externas controladas por el backend.</li>
+</ol>
+<h3>5.6 Consideraciones de Implementacion en MySQL</h3>
+<ol>
+<li>Usar <code>utf8mb4</code>.</li>
+<li>Usar tablas relacionales para atributos personalizados en lugar de depender exclusivamente de JSON.</li>
+<li>Crear indices por <code>company_id</code>, <code>position_id</code>, <code>candidate_id</code>, <code>current_stage_id</code> y combinaciones frecuentes de consulta.</li>
+<li>Mantener columnas de auditoria para trazabilidad operativa.</li>
+</ol>
+<h3>5.7 Diagrama E-R</h3>
+<div class="mermaid">erDiagram
+    USER ||--o{ USER_COMPANY_MEMBERSHIP : belongs
+    COMPANY ||--o{ USER_COMPANY_MEMBERSHIP : includes
+    COMPANY ||--o{ TEAM : owns
+    TEAM ||--o{ TEAM_MEMBER : has
+    USER ||--o{ TEAM_MEMBER : participates
+
+    COMPANY ||--o{ PIPELINE : defines
+    PIPELINE ||--o{ PIPELINE_STAGE : contains
+    COMPANY ||--o{ QUESTIONNAIRE : defines
+    QUESTIONNAIRE ||--o{ QUESTIONNAIRE_QUESTION : contains
+    COMPANY ||--o{ SCORECARD_TEMPLATE : defines
+    SCORECARD_TEMPLATE ||--o{ SCORECARD_CRITERION : contains
+
+    COMPANY ||--o{ POSITION : owns
+    PIPELINE ||--o{ POSITION : used_by
+    TEAM ||--o{ POSITION : manages
+    QUESTIONNAIRE ||--o{ POSITION : default_for
+    SCORECARD_TEMPLATE ||--o{ POSITION : default_for
+    POSITION ||--o{ POSITION_CUSTOM_ATTRIBUTE : has
+
+    CANDIDATE ||--o{ CANDIDATE_EDUCATION : has
+    CANDIDATE ||--o{ CANDIDATE_WORK_HISTORY : has
+    CANDIDATE ||--o{ APPLICATION : submits
+    POSITION ||--o{ APPLICATION : receives
+    PIPELINE_STAGE ||--o{ APPLICATION : current_stage
+    APPLICATION ||--o{ APPLICATION_STAGE_HISTORY : records
+
+    APPLICATION ||--o{ QUESTIONNAIRE_ASSIGNMENT : has
+    QUESTIONNAIRE ||--o{ QUESTIONNAIRE_ASSIGNMENT : assigned
+    QUESTIONNAIRE_ASSIGNMENT ||--o{ QUESTIONNAIRE_RESPONSE : records
+
+    APPLICATION ||--o{ APPLICATION_SCORECARD : has
+    SCORECARD_TEMPLATE ||--o{ APPLICATION_SCORECARD : based_on
+    APPLICATION_SCORECARD ||--o{ APPLICATION_SCORECARD_ITEM : details
+    SCORECARD_CRITERION ||--o{ APPLICATION_SCORECARD_ITEM : evaluates
+
+    APPLICATION ||--o{ APPLICATION_DOCUMENT : has
+    APPLICATION ||--o{ NOTIFICATION_LOG : produces</div><hr>
+<h2>6. Arquitectura del Sistema Modelo C4</h2>
+<h3>6.1 Objetivo</h3>
+<p>Describir la arquitectura de alto nivel del sistema de reclutamiento utilizando el modelo C4 para representar contexto, contenedores y componentes principales del backend.</p>
+<h3>6.2 Estilo Arquitectonico</h3>
+<p>Se propone una arquitectura web en capas con responsabilidades bien separadas:</p>
+<ol>
+<li>Capa de presentacion.</li>
+<li>Capa de APIs.</li>
+<li>Capa de aplicacion.</li>
+<li>Capa de dominio.</li>
+<li>Capa de persistencia.</li>
+<li>Capa de integraciones externas.</li>
+</ol>
+<h3>6.3 Decisiones Arquitectonicas Clave</h3>
+<ol>
+<li>Backend principal con FastAPI.</li>
+<li>Frontend desacoplado con React y Tailwind.</li>
+<li>Base de datos MySQL.</li>
+<li>JWT para autenticacion.</li>
+<li>Contexto multiempresa resuelto mediante compania activa validada en backend.</li>
+<li>Candidato global separado de <code>Application</code>.</li>
+<li>Integracion de correo sincronico via API externa.</li>
+<li>Integracion de archivos via API externa con descarga autorizada por Bearer token.</li>
+</ol>
+<h3>6.4 Diagrama de Contexto</h3>
+<div class="mermaid">flowchart TD
+    U1[Administrador] --&gt; S[Sistema SaaS de Reclutamiento]
+    U2[Reclutador] --&gt; S
+    U3[Candidato] --&gt; S
+    S --&gt; E1[API externa de correo]
+    S --&gt; E2[API externa de almacenamiento]
+    S --&gt; C1[Empresas clientes]</div><h3>6.5 Diagrama de Contenedores</h3>
+<div class="mermaid">flowchart TD
+    A[Usuarios Web] --&gt; B[Frontend React y Tailwind]
+    B --&gt; C[Backend FastAPI]
+    C --&gt; D[MySQL]
+    C --&gt; E[API externa de correo]
+    C --&gt; F[API externa de archivos]
+    G[Candidatos desde portal publico] --&gt; B</div><h3>6.6 Diagrama de Componentes del Backend</h3>
+<div class="mermaid">flowchart TD
+    A[Routers REST] --&gt; B[Security Dependencies]
+    B --&gt; C[Application Services]
+    C --&gt; D[Repositories]
+    D --&gt; E[ORM Models]
+    E --&gt; F[(MySQL)]
+    C --&gt; G[Email Provider Client]
+    C --&gt; H[File Storage Provider Client]
+    C --&gt; I[Notification Service]
+    C --&gt; J[Audit and Stage History Service]</div><h3>6.7 Riesgos y Tradeoffs</h3>
+<ol>
+<li>El envio sincronico de correo simplifica la implementacion inicial, pero aumenta latencia y dependencia operativa.</li>
+<li>El almacenamiento externo reduce carga local, pero exige manejo robusto de autenticacion y errores.</li>
+<li>La validacion multiempresa en backend es indispensable para evitar fugas de informacion.</li>
+</ol>
+<hr>
+<h2>7. Prototipo y Mockups de la Aplicacion</h2>
+<h3>7.1 Objetivo</h3>
+<p>Definir las pantallas clave de la aplicacion para alinear el frontend futuro con los procesos de negocio, el modelo de datos y la arquitectura del backend.</p>
+<h3>7.2 Enfoque de Prototipado</h3>
+<p>En esta etapa se propone un prototipado de baja fidelidad basado en estructuras de pantalla, secciones funcionales y flujo entre vistas. El objetivo no es cerrar el diseno visual final, sino asegurar cobertura funcional completa.</p>
+<h3>7.3 Pantallas Clave</h3>
+<ol>
+<li>Login.</li>
+<li>Seleccion de compania activa.</li>
+<li>Dashboard principal.</li>
+<li>Listado de posiciones.</li>
+<li>Crear o editar posicion.</li>
+<li>Detalle de posicion.</li>
+<li>Board de pipeline por posicion.</li>
+<li>Detalle de candidato y postulacion.</li>
+<li>Gestion de cuestionarios.</li>
+<li>Portal de empleo.</li>
+<li>Formulario de postulacion.</li>
+</ol>
+<h3>7.4 Flujo Principal de Navegacion</h3>
+<ol>
+<li>Usuario inicia sesion.</li>
+<li>Usuario selecciona compania activa.</li>
+<li>Usuario navega a posiciones.</li>
+<li>Usuario crea o administra una vacante.</li>
+<li>Usuario revisa postulaciones en board por etapas.</li>
+<li>Usuario abre detalle de candidato y ejecuta acciones.</li>
+<li>Candidato externo explora vacantes y aplica desde el portal.</li>
+</ol>
+<h3>7.5 Consideraciones UX</h3>
+<ol>
+<li>Debe existir separacion clara entre vista interna de reclutamiento y portal publico de empleo.</li>
+<li>El selector de compania activa debe ser visible y consistente.</li>
+<li>El board de pipeline debe priorizar claridad operativa sobre densidad visual.</li>
+<li>El formulario de postulacion debe ser simple y legible desde movil.</li>
+</ol>
+<h3>7.6 Detalle de Pantallas</h3>
+<h4>Login</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Campo email.</li>
+<li>Campo password.</li>
+<li>Boton iniciar sesion.</li>
+<li>Mensajes de error.</li>
+</ol>
+<h4>Seleccion de compania activa</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Lista de companias disponibles.</li>
+<li>Indicador de rol por compania.</li>
+<li>Boton continuar.</li>
+</ol>
+<h4>Dashboard principal</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Resumen de posiciones abiertas.</li>
+<li>Resumen de candidatos por etapa.</li>
+<li>Alertas de correos fallidos.</li>
+<li>Accesos rapidos a posiciones y candidatos.</li>
+</ol>
+<h4>Listado de posiciones</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Tabla o tarjetas de posiciones.</li>
+<li>Filtros por estado y departamento.</li>
+<li>Busqueda por nombre o requisition id.</li>
+<li>Boton crear posicion.</li>
+</ol>
+<h4>Crear o editar posicion</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Datos generales.</li>
+<li>Tipo de empleo.</li>
+<li>Ubicacion.</li>
+<li>Departamento.</li>
+<li>Requisition id.</li>
+<li>Categoria.</li>
+<li>Experiencia.</li>
+<li>Educacion.</li>
+<li>Pipeline.</li>
+<li>Scorecard.</li>
+<li>Questionnaire.</li>
+<li>Tags.</li>
+<li>Custom attributes.</li>
+</ol>
+<h4>Detalle de posicion</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Informacion general.</li>
+<li>Estado de la vacante.</li>
+<li>Equipo asignado.</li>
+<li>Pipeline asociado.</li>
+<li>Atajos a board de candidatos.</li>
+</ol>
+<h4>Board de pipeline por posicion</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Columnas por etapa.</li>
+<li>Tarjetas de postulacion.</li>
+<li>Conteo por etapa.</li>
+<li>Accion mover etapa.</li>
+<li>Accion enviar cuestionario.</li>
+<li>Accion registrar scorecard.</li>
+</ol>
+<h4>Detalle de candidato y postulacion</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Perfil del candidato.</li>
+<li>Historial laboral.</li>
+<li>Educacion.</li>
+<li>Documentos adjuntos.</li>
+<li>Historial de etapas.</li>
+<li>Cuestionarios asignados.</li>
+<li>Scorecards.</li>
+<li>Registro de notificaciones.</li>
+</ol>
+<h4>Portal de empleo</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Listado de vacantes publicadas.</li>
+<li>Busqueda y filtros.</li>
+<li>Tarjeta con resumen de posicion.</li>
+<li>Accion aplicar.</li>
+</ol>
+<h4>Formulario de postulacion</h4>
+<p>Elementos principales:</p>
+<ol>
+<li>Nombre.</li>
+<li>Email.</li>
+<li>Telefono.</li>
+<li>Direccion.</li>
+<li>Resumen.</li>
+<li>Historial laboral.</li>
+<li>Educacion.</li>
+<li>Adjuntar CV.</li>
+<li>Boton enviar aplicacion.</li>
+</ol>
+<hr>
+<h2>8. Conclusiones</h2>
+<p>El sistema propuesto responde a una necesidad real de organizacion y escalabilidad en procesos de reclutamiento multiempresa. La primera etapa del proyecto debe enfocarse en construir una base backend solida, bien modelada y alineada con el dominio del negocio, dejando el frontend definido a nivel de experiencia, navegacion y arquitectura futura.</p>
+<p>Las decisiones clave del proyecto quedaron consolidadas en este documento:</p>
+<ol>
+<li>Stack tecnico con FastAPI, React, Tailwind y MySQL.</li>
+<li>JWT como mecanismo de autenticacion.</li>
+<li>Operacion multiempresa para usuarios.</li>
+<li>Candidato global con multiples postulaciones.</li>
+<li><code>Application</code> como entidad central del proceso de reclutamiento.</li>
+<li>Integracion de archivos y correo mediante APIs externas.</li>
+<li>Politica de correo fallido sin revertir la operacion principal.</li>
+<li>Descarga de archivos con Bearer token y control desde backend.</li>
+</ol>
+<p>Con esta base, el proyecto ya dispone de una documentacion suficientemente estructurada para continuar hacia revision formal, refinamiento visual y posterior exportacion a PDF profesional.</p>
+<hr>
+<h2>9. Recomendaciones Finales</h2>
+<ol>
+<li>Completar los datos institucionales, del curso, docente e integrantes antes de la exportacion final.</li>
+<li>Revisar si el entorno de exportacion soporta renderizado nativo de diagramas Mermaid para evitar perdida visual en BPMN, E-R y C4.</li>
+<li>Definir una portada final con identidad institucional si la universidad o curso exige formato especifico.</li>
+<li>Incorporar numeracion de paginas, encabezados y pie de pagina en la version PDF.</li>
+<li>Si el entregable sera evaluado formalmente, agregar una seccion inicial de introduccion academica y una seccion final de referencias o anexos si corresponde.</li>
+</ol>
+<h2>Nota de Preparacion para PDF</h2>
+<p>El presente archivo ha sido refinado como fuente maestra de documentacion. Su proximo paso natural es la exportacion a PDF con ajustes de formato, portada final y validacion visual de diagramas. Los marcadores entre corchetes fueron dejados de forma intencional para completar informacion academica o institucional que no fue proporcionada durante la elaboracion.</p>
+
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#1a3a5c',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#2563a8',
+        lineColor: '#4a5568',
+        secondaryColor: '#f4f7fb',
+        tertiaryColor: '#ffffff',
+        fontSize: '13px'
+      },
+      flowchart: { htmlLabels: true, curve: 'basis' },
+      er: { useMaxWidth: true },
+      sequence: { useMaxWidth: true }
+    });
+  </script>
+</body>
+</html>

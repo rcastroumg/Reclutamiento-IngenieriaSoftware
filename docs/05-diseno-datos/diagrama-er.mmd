@@ -1,0 +1,199 @@
+erDiagram
+    USER ||--o{ USER_COMPANY_MEMBERSHIP : belongs
+    COMPANY ||--o{ USER_COMPANY_MEMBERSHIP : includes
+    COMPANY ||--o{ TEAM : owns
+    TEAM ||--o{ TEAM_MEMBER : has
+    USER ||--o{ TEAM_MEMBER : participates
+
+    COMPANY ||--o{ PIPELINE : defines
+    PIPELINE ||--o{ PIPELINE_STAGE : contains
+    COMPANY ||--o{ QUESTIONNAIRE : defines
+    QUESTIONNAIRE ||--o{ QUESTIONNAIRE_QUESTION : contains
+    COMPANY ||--o{ SCORECARD_TEMPLATE : defines
+    SCORECARD_TEMPLATE ||--o{ SCORECARD_CRITERION : contains
+
+    COMPANY ||--o{ POSITION : owns
+    PIPELINE ||--o{ POSITION : used_by
+    TEAM ||--o{ POSITION : manages
+    QUESTIONNAIRE ||--o{ POSITION : default_for
+    SCORECARD_TEMPLATE ||--o{ POSITION : default_for
+    POSITION ||--o{ POSITION_CUSTOM_ATTRIBUTE : has
+
+    CANDIDATE ||--o{ CANDIDATE_EDUCATION : has
+    CANDIDATE ||--o{ CANDIDATE_WORK_HISTORY : has
+    CANDIDATE ||--o{ APPLICATION : submits
+    POSITION ||--o{ APPLICATION : receives
+    PIPELINE_STAGE ||--o{ APPLICATION : current_stage
+    APPLICATION ||--o{ APPLICATION_STAGE_HISTORY : records
+
+    APPLICATION ||--o{ QUESTIONNAIRE_ASSIGNMENT : has
+    QUESTIONNAIRE ||--o{ QUESTIONNAIRE_ASSIGNMENT : assigned
+    QUESTIONNAIRE_ASSIGNMENT ||--o{ QUESTIONNAIRE_RESPONSE : records
+
+    APPLICATION ||--o{ APPLICATION_SCORECARD : has
+    SCORECARD_TEMPLATE ||--o{ APPLICATION_SCORECARD : based_on
+    APPLICATION_SCORECARD ||--o{ APPLICATION_SCORECARD_ITEM : details
+    SCORECARD_CRITERION ||--o{ APPLICATION_SCORECARD_ITEM : evaluates
+
+    APPLICATION ||--o{ APPLICATION_DOCUMENT : has
+    APPLICATION ||--o{ NOTIFICATION_LOG : produces
+
+    USER {
+        bigint id PK
+        string name
+        string email
+        string password_hash
+        boolean is_active
+    }
+    COMPANY {
+        bigint id PK
+        string name
+        string slug
+        string subscription_status
+    }
+    USER_COMPANY_MEMBERSHIP {
+        bigint id PK
+        bigint user_id FK
+        bigint company_id FK
+        string role
+        boolean is_default
+        string status
+    }
+    TEAM {
+        bigint id PK
+        bigint company_id FK
+        string name
+    }
+    TEAM_MEMBER {
+        bigint id PK
+        bigint team_id FK
+        bigint user_id FK
+    }
+    PIPELINE {
+        bigint id PK
+        bigint company_id FK
+        string name
+        boolean is_default
+    }
+    PIPELINE_STAGE {
+        bigint id PK
+        bigint pipeline_id FK
+        string name
+        int order_index
+    }
+    QUESTIONNAIRE {
+        bigint id PK
+        bigint company_id FK
+        string name
+    }
+    QUESTIONNAIRE_QUESTION {
+        bigint id PK
+        bigint questionnaire_id FK
+        string question_text
+        string type
+    }
+    SCORECARD_TEMPLATE {
+        bigint id PK
+        bigint company_id FK
+        string name
+    }
+    SCORECARD_CRITERION {
+        bigint id PK
+        bigint scorecard_template_id FK
+        string name
+        int max_score
+    }
+    POSITION {
+        bigint id PK
+        bigint company_id FK
+        bigint pipeline_id FK
+        bigint team_id FK
+        bigint questionnaire_id FK
+        bigint scorecard_template_id FK
+        string name
+        string type
+        string state
+    }
+    POSITION_CUSTOM_ATTRIBUTE {
+        bigint id PK
+        bigint position_id FK
+        string name
+        text value
+        boolean secure
+    }
+    CANDIDATE {
+        bigint id PK
+        string name
+        string email_address
+        string phone_number
+        string address
+    }
+    CANDIDATE_EDUCATION {
+        bigint id PK
+        bigint candidate_id FK
+        string institution
+        string degree
+    }
+    CANDIDATE_WORK_HISTORY {
+        bigint id PK
+        bigint candidate_id FK
+        string company_name
+        string title
+    }
+    APPLICATION {
+        bigint id PK
+        bigint candidate_id FK
+        bigint company_id FK
+        bigint position_id FK
+        bigint current_stage_id FK
+        string origin
+        string source
+        string status
+    }
+    APPLICATION_STAGE_HISTORY {
+        bigint id PK
+        bigint application_id FK
+        bigint from_stage_id FK
+        bigint to_stage_id FK
+        bigint moved_by_user_id FK
+        datetime moved_at
+    }
+    QUESTIONNAIRE_ASSIGNMENT {
+        bigint id PK
+        bigint application_id FK
+        bigint questionnaire_id FK
+        string status
+    }
+    QUESTIONNAIRE_RESPONSE {
+        bigint id PK
+        bigint assignment_id FK
+        bigint question_id FK
+        text response_value
+    }
+    APPLICATION_SCORECARD {
+        bigint id PK
+        bigint application_id FK
+        bigint scorecard_template_id FK
+        bigint evaluator_user_id FK
+        int total_score
+    }
+    APPLICATION_SCORECARD_ITEM {
+        bigint id PK
+        bigint application_scorecard_id FK
+        bigint criterion_id FK
+        int score
+    }
+    APPLICATION_DOCUMENT {
+        bigint id PK
+        bigint application_id FK
+        bigint candidate_id FK
+        string external_file_id
+        string file_name
+    }
+    NOTIFICATION_LOG {
+        bigint id PK
+        bigint application_id FK
+        string event_type
+        string status
+        text error_message
+    }
