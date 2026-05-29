@@ -17,6 +17,16 @@ class PositionStatus(str, enum.Enum):
     closed = "closed"
 
 
+class SalaryFrequency(str, enum.Enum):
+    monthly = "monthly"
+    annual = "annual"
+
+
+class SalaryCurrency(str, enum.Enum):
+    GTQ = "GTQ"
+    USD = "USD"
+
+
 class User(TimestampMixin, Base):
     __tablename__ = "users"
 
@@ -90,6 +100,10 @@ class Position(TimestampMixin, Base):
     title: Mapped[str] = mapped_column(String(180), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     location: Mapped[str] = mapped_column(String(150), nullable=False)
+    salary_min: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    salary_max: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    salary_frequency: Mapped[SalaryFrequency] = mapped_column(Enum(SalaryFrequency), nullable=False, default=SalaryFrequency.monthly)
+    salary_currency: Mapped[SalaryCurrency] = mapped_column(Enum(SalaryCurrency), nullable=False, default=SalaryCurrency.GTQ)
     status: Mapped[PositionStatus] = mapped_column(Enum(PositionStatus), default=PositionStatus.draft, nullable=False)
     is_public: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 

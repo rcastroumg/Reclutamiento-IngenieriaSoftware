@@ -22,6 +22,10 @@ def bootstrap_public_position(client, auth_headers):
             "title": "Fullstack Developer",
             "description": "Construir backend y frontend del portal.",
             "location": "Guatemala",
+            "salary_min": 5000,
+            "salary_max": 8000,
+            "salary_frequency": "monthly",
+            "salary_currency": "GTQ",
             "pipeline_id": pipeline["id"],
             "status": "open",
         },
@@ -39,6 +43,10 @@ def test_public_jobs_list_only_published_positions(client, auth_headers):
     assert jobs_response.status_code == 200
     assert len(jobs_response.json()) == 1
     assert jobs_response.json()[0]["id"] == published["id"]
+    assert jobs_response.json()[0]["salary_min"] == 5000
+    assert jobs_response.json()[0]["salary_max"] == 8000
+    assert jobs_response.json()[0]["salary_frequency"] == "monthly"
+    assert jobs_response.json()[0]["salary_currency"] == "GTQ"
 
 
 def test_public_application_creates_candidate_and_application(client, auth_headers):

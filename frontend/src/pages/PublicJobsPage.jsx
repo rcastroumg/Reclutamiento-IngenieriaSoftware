@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { publicJobsApi } from '../api/client.js'
+import { formatSalaryRange } from '../utils/compensation.js'
 
 const emptyForm = {
   full_name: '',
@@ -85,6 +86,7 @@ export function PublicJobsPage() {
                 >
                   <p className="text-lg font-semibold text-white">{job.title}</p>
                   <p className="mt-1 text-sm text-cyan-200">{job.location}</p>
+                  <p className="mt-2 text-sm font-medium text-emerald-200">{formatSalaryRange(job)}</p>
                   <p className="mt-3 text-sm text-slate-300">{job.description}</p>
                 </button>
               ))

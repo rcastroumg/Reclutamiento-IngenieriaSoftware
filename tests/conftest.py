@@ -1,4 +1,5 @@
 from collections.abc import Generator
+import os
 from pathlib import Path
 import sys
 
@@ -11,6 +12,12 @@ from sqlalchemy.pool import StaticPool
 APP_DIR = Path(__file__).resolve().parents[1] / "app"
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
+
+os.environ["DB_HOST"] = ""
+os.environ["DB_USER"] = ""
+os.environ["DB_NAME"] = ""
+os.environ["DB_PASSWORD"] = ""
+os.environ["DB_PORT"] = "3306"
 
 from db.base import Base
 from core.config import get_settings

@@ -3,13 +3,26 @@ import { Link } from 'react-router-dom'
 
 import { pipelineApi, positionApi } from '../api/client.js'
 import { useAuth } from '../context/useAuth.jsx'
+import { formatSalaryRange } from '../utils/compensation.js'
 
 const emptyForm = {
   title: '',
   description: '',
   location: '',
+  salary_min: '',
+  salary_max: '',
+  salary_frequency: 'monthly',
+  salary_currency: 'GTQ',
   pipeline_id: '',
   status: 'draft',
+}
+
+function getVisibilityLabel(position) {
+  if (position.status === 'closed') {
+    return 'Cerrada'
+  }
+
+  return position.is_public ? 'Publicada' : 'Interna'
 }
 
 export function PositionsPage() {
@@ -20,6 +33,7 @@ export function PositionsPage() {
   const [applications, setApplications] = useState([])
   const [stageSelections, setStageSelections] = useState({})
   const [form, setForm] = useState(emptyForm)
+  const [editingPositionId, setEditingPositionId] = useState('')
   const [message, setMessage] = useState('')
 
   const selectedPosition = positions.find((position) => String(position.id) === String(selectedPositionId))
@@ -94,25 +108,100 @@ export function PositionsPage() {
   const reloadPositions = async () => {
     const data = await positionApi.list({ token, companyId: activeCompanyId })
     setPositions(data)
-    setSelectedPositionId((current) => current || String(data[0]?.id ?? ''))
+    setSelectedPositionId((current) => {
+      if (!data.some((position) => String(position.id) === String(current))) {
+        return String(data[0]?.id ?? '')
+      }
+
+      return current || String(data[0]?.id ?? '')
+    })
     return data
   }
 
-  const handleCreatePosition = async (event) => {
+  const resetForm = () => {
+    setForm((current) => ({ ...emptyForm, pipeline_id: current.pipeline_id || String(pipelines[0]?.id ?? '') }))
+    setEditingPositionId('')
+  }
+
+  const handleSubmitPosition = async (event) => {
     event.preventDefault()
+
     try {
-      const created = await positionApi.create({
-        token,
-        companyId: activeCompanyId,
-        payload: {
-          ...form,
-          pipeline_id: Number(form.pipeline_id),
-        },
-      })
-      setMessage('Vacante creada correctamente.')
-      setForm((current) => ({ ...emptyForm, pipeline_id: current.pipeline_id }))
+      if (editingPositionId) {
+        const updated = await positionApi.update({
+          token,
+          companyId: activeCompanyId,
+          positionId: editingPositionId,
+          payload: {
+            title: form.title,
+            description: form.description,
+            location: form.location,
+            salary_min: Number(form.salary_min),
+            salary_max: Number(form.salary_max),
+            salary_frequency: form.salary_frequency,
+            salary_currency: form.salary_currency,
+            status: form.status,
+          },
+        })
+        setMessage('Vacante actualizada correctamente.')
+        await reloadPositions()
+        setSelectedPositionId(String(updated.id))
+        resetForm()
+      } else {
+        const created = await positionApi.create({
+          token,
+          companyId: activeCompanyId,
+          payload: {
+            ...form,
+            salary_min: Number(form.salary_min),
+            salary_max: Number(form.salary_max),
+            pipeline_id: Number(form.pipeline_id),
+          },
+        })
+        setMessage('Vacante creada correctamente.')
+        resetForm()
+        const data = await reloadPositions()
+        setSelectedPositionId(String(created.id ?? data[0]?.id ?? ''))
+      }
+    } catch (error) {
+      setMessage(error.message)
+    }
+  }
+
+  const handleEdit = (position) => {
+    setEditingPositionId(String(position.id))
+    setForm({
+      title: position.title,
+      description: position.description,
+      location: position.location,
+      salary_min: String(position.salary_min),
+      salary_max: String(position.salary_max),
+      salary_frequency: position.salary_frequency,
+      salary_currency: position.salary_currency,
+      pipeline_id: String(position.pipeline_id),
+      status: position.status,
+    })
+    setMessage('')
+  }
+
+  const handleDelete = async (positionId) => {
+    try {
+      const result = await positionApi.delete({ token, companyId: activeCompanyId, positionId })
       const data = await reloadPositions()
-      setSelectedPositionId(String(created.id ?? data[0]?.id ?? ''))
+      if (editingPositionId === String(positionId)) {
+        resetForm()
+      }
+
+      if (result === null) {
+        setMessage('Vacante eliminada correctamente.')
+        if (selectedPositionId === String(positionId)) {
+          setSelectedPositionId(String(data[0]?.id ?? ''))
+        }
+        return
+      }
+
+      setMessage('La vacante tenia postulaciones; se cerro y se retiro del portal.')
+      setSelectedPositionId(String(result.id))
     } catch (error) {
       setMessage(error.message)
     }
@@ -165,9 +254,9 @@ export function PositionsPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <form className="glass-panel rounded-3xl border border-white/10 p-6" onSubmit={handleCreatePosition}>
+        <form className="glass-panel rounded-3xl border border-white/10 p-6" onSubmit={handleSubmitPosition}>
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold text-white">Nueva vacante</h3>
+            <h3 className="text-xl font-semibold text-white">{editingPositionId ? 'Editar vacante' : 'Nueva vacante'}</h3>
             <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">UI conectada</span>
           </div>
 
@@ -185,7 +274,22 @@ export function PositionsPage() {
             <textarea className="min-h-28 rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" placeholder="Descripcion" value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} required />
             <input className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" placeholder="Ubicacion" value={form.location} onChange={(event) => setForm((current) => ({ ...current, location: event.target.value }))} required />
             <div className="grid gap-4 sm:grid-cols-2">
-              <select className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" value={form.pipeline_id} onChange={(event) => setForm((current) => ({ ...current, pipeline_id: event.target.value }))} required>
+              <input className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" placeholder="Minimo salarial" type="number" min="1" value={form.salary_min} onChange={(event) => setForm((current) => ({ ...current, salary_min: event.target.value }))} required />
+              <input className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" placeholder="Maximo salarial" type="number" min="1" value={form.salary_max} onChange={(event) => setForm((current) => ({ ...current, salary_max: event.target.value }))} required />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <select className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" value={form.salary_frequency} onChange={(event) => setForm((current) => ({ ...current, salary_frequency: event.target.value }))} required>
+                <option value="monthly">Mensual</option>
+                <option value="annual">Anual</option>
+              </select>
+
+              <select className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white" value={form.salary_currency} onChange={(event) => setForm((current) => ({ ...current, salary_currency: event.target.value }))} required>
+                <option value="GTQ">GTQ</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <select className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white disabled:cursor-not-allowed disabled:opacity-60" value={form.pipeline_id} onChange={(event) => setForm((current) => ({ ...current, pipeline_id: event.target.value }))} required disabled={Boolean(editingPositionId)}>
                 <option value="">Selecciona un pipeline</option>
                 {pipelines.map((pipeline) => (
                   <option key={pipeline.id} value={pipeline.id}>{pipeline.name}</option>
@@ -200,9 +304,16 @@ export function PositionsPage() {
             </div>
           </div>
 
-          <button type="submit" disabled={pipelines.length === 0} className="mt-6 w-full rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60">
-            Crear vacante
-          </button>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button type="submit" disabled={pipelines.length === 0} className="w-full rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60">
+              {editingPositionId ? 'Guardar cambios' : 'Crear vacante'}
+            </button>
+            {editingPositionId ? (
+              <button type="button" onClick={resetForm} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white transition hover:bg-white/10">
+                Cancelar edicion
+              </button>
+            ) : null}
+          </div>
         </form>
 
         <section className="glass-panel rounded-3xl border border-white/10 p-6">
@@ -278,27 +389,42 @@ export function PositionsPage() {
                   <div>
                     <div className="flex flex-wrap gap-2">
                       <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-200">{position.status}</span>
-                      <span className={`rounded-full px-3 py-1 text-xs font-medium ${position.is_public ? 'bg-emerald-400/10 text-emerald-200' : 'bg-slate-400/10 text-slate-300'}`}>
-                        {position.is_public ? 'Publicada' : 'Interna'}
+                      <span className={`rounded-full px-3 py-1 text-xs font-medium ${position.status === 'closed' ? 'bg-rose-400/10 text-rose-200' : position.is_public ? 'bg-emerald-400/10 text-emerald-200' : 'bg-slate-400/10 text-slate-300'}`}>
+                        {getVisibilityLabel(position)}
                       </span>
-                    </div>
-                    <h4 className="mt-3 text-xl font-semibold text-white">{position.title}</h4>
-                    <p className="mt-1 text-sm text-cyan-200">{position.location}</p>
-                    <p className="mt-3 text-sm text-slate-300">{position.description}</p>
-                  </div>
+                     </div>
+                     <h4 className="mt-3 text-xl font-semibold text-white">{position.title}</h4>
+                     <p className="mt-1 text-sm text-cyan-200">{position.location}</p>
+                     <p className="mt-2 text-sm font-medium text-emerald-200">{formatSalaryRange(position)}</p>
+                     <p className="mt-3 text-sm text-slate-300">{position.description}</p>
+                   </div>
 
-                  <div className="lg:w-52">
-                    <button
-                      type="button"
-                      disabled={position.is_public || position.status !== 'open'}
+                    <div className="flex flex-col gap-3 lg:w-52">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(position)}
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        disabled={position.is_public || position.status !== 'open'}
                       onClick={() => handlePublish(position.id)}
                       className="w-full rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-3 text-sm font-medium text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/5 disabled:text-slate-400"
-                    >
-                      {position.is_public ? 'Ya publicada' : 'Publicar en portal'}
-                    </button>
+                      >
+                        {position.is_public ? 'Ya publicada' : 'Publicar en portal'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(position.id)}
+                        className="w-full rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-200 transition hover:bg-rose-500/20"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </article>
             ))
           )}
         </div>

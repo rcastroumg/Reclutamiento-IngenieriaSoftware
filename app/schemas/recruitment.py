@@ -1,6 +1,19 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
-from models.recruitment import PositionStatus
+from models.recruitment import PositionStatus, SalaryCurrency, SalaryFrequency
+
+
+class SalaryRangeMixin(BaseModel):
+    salary_min: int = Field(gt=0)
+    salary_max: int = Field(gt=0)
+    salary_frequency: SalaryFrequency
+    salary_currency: SalaryCurrency
+
+    @model_validator(mode="after")
+    def validate_salary_range(self):
+        if self.salary_max < self.salary_min:
+            raise ValueError("salary_max must be greater than or equal to salary_min")
+        return self
 
 
 class PipelineStageCreate(BaseModel):
@@ -31,7 +44,7 @@ class PipelineRead(BaseModel):
     stages: list[PipelineStageRead]
 
 
-class PositionCreate(BaseModel):
+class PositionCreate(SalaryRangeMixin):
     title: str = Field(min_length=3, max_length=180)
     description: str = Field(min_length=10)
     location: str = Field(min_length=2, max_length=150)
@@ -47,8 +60,19 @@ class PositionRead(BaseModel):
     description: str
     location: str
     pipeline_id: int
+    salary_min: int
+    salary_max: int
+    salary_frequency: SalaryFrequency
+    salary_currency: SalaryCurrency
     status: PositionStatus
     is_public: bool
+
+
+class PositionUpdate(SalaryRangeMixin):
+    title: str = Field(min_length=3, max_length=180)
+    description: str = Field(min_length=10)
+    location: str = Field(min_length=2, max_length=150)
+    status: PositionStatus
 
 
 class PublicPositionRead(BaseModel):
@@ -58,6 +82,10 @@ class PublicPositionRead(BaseModel):
     title: str
     description: str
     location: str
+    salary_min: int
+    salary_max: int
+    salary_frequency: SalaryFrequency
+    salary_currency: SalaryCurrency
 
 
 class PublicApplicationCreate(BaseModel):

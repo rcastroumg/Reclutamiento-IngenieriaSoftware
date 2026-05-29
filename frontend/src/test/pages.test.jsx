@@ -33,11 +33,11 @@ describe('frontend business pages', () => {
     seedSession()
     globalThis.fetch = vi
       .fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 1, title: 'Backend Developer', description: 'APIs', location: 'Guatemala', pipeline_id: 1, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 1, title: 'Backend Developer', description: 'APIs', location: 'Guatemala', salary_min: 5000, salary_max: 8000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 1, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 1, name: 'Pipeline General', is_default: true, stages: [{ id: 1, name: 'Aplicado', order_index: 1 }] }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 1, title: 'Backend Developer', description: 'APIs', location: 'Guatemala', pipeline_id: 1, status: 'open', is_public: true }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
-      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 1, title: 'Backend Developer', description: 'APIs', location: 'Guatemala', pipeline_id: 1, status: 'open', is_public: true }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 1, title: 'Backend Developer', description: 'APIs', location: 'Guatemala', salary_min: 5000, salary_max: 8000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 1, status: 'open', is_public: true }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 1, title: 'Backend Developer', description: 'APIs', location: 'Guatemala', salary_min: 5000, salary_max: 8000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 1, status: 'open', is_public: true }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
 
     render(
       <AuthProvider>
@@ -47,7 +47,8 @@ describe('frontend business pages', () => {
       </AuthProvider>,
     )
 
-    expect(await screen.findByRole('heading', { name: 'Backend Developer' })).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { name: 'Backend Developer' })).toBeInTheDocument()
+      expect(screen.getByText('Q 5,000 - Q 8,000 / mes')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Publicar en portal' }))
 
@@ -137,8 +138,8 @@ describe('frontend business pages', () => {
       .fn()
       .mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 3, name: 'Pipeline Tech', is_default: true, stages: [{ id: 8, name: 'Aplicado', order_index: 1 }] }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 9, title: 'QA Engineer', description: 'Validar calidad en cada release.', location: 'Remoto', pipeline_id: 3, status: 'open', is_public: false }), { status: 201, headers: { 'Content-Type': 'application/json' } }))
-      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad en cada release.', location: 'Remoto', pipeline_id: 3, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 9, title: 'QA Engineer', description: 'Validar calidad en cada release.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'open', is_public: false }), { status: 201, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad en cada release.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 22, position_id: 9, candidate_id: 7, current_stage_id: 8, notes: 'CV recibido', candidate: { id: 7, full_name: 'Ana Perez', email: 'ana@example.com' }, current_stage: { id: 8, name: 'Aplicado', order_index: 1 } }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
 
     render(
@@ -152,6 +153,8 @@ describe('frontend business pages', () => {
     await userEvent.type(screen.getByPlaceholderText('Titulo'), 'QA Engineer')
     await userEvent.type(screen.getByPlaceholderText('Descripcion'), 'Validar calidad en cada release.')
     await userEvent.type(screen.getByPlaceholderText('Ubicacion'), 'Remoto')
+    await userEvent.type(screen.getByPlaceholderText('Minimo salarial'), '7000')
+    await userEvent.type(screen.getByPlaceholderText('Maximo salarial'), '9000')
     await userEvent.selectOptions(screen.getByDisplayValue('Pipeline Tech'), '3')
     await userEvent.selectOptions(screen.getByDisplayValue('draft'), 'open')
     await userEvent.click(screen.getByRole('button', { name: 'Crear vacante' }))
@@ -160,6 +163,84 @@ describe('frontend business pages', () => {
       expect(screen.getByText('Vacante creada correctamente.')).toBeInTheDocument()
       expect(screen.getByText('Ana Perez')).toBeInTheDocument()
       expect(screen.getByDisplayValue('Aplicado')).toBeInTheDocument()
+      expect(screen.getByText('Q 7,000 - Q 9,000 / mes')).toBeInTheDocument()
+    })
+  })
+
+  it('edits a position without allowing pipeline changes', async () => {
+    seedSession()
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 3, name: 'Pipeline Tech', is_default: true, stages: [{ id: 8, name: 'Aplicado', order_index: 1 }] }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 9, title: 'Senior QA Engineer', description: 'Validar calidad de punta a punta.', location: 'Hibrido', salary_min: 9500, salary_max: 12000, salary_frequency: 'annual', salary_currency: 'USD', pipeline_id: 3, status: 'closed', is_public: false }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'Senior QA Engineer', description: 'Validar calidad de punta a punta.', location: 'Hibrido', salary_min: 9500, salary_max: 12000, salary_frequency: 'annual', salary_currency: 'USD', pipeline_id: 3, status: 'closed', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+
+    render(
+      <AuthProvider>
+        <MemoryRouter>
+          <PositionsPage />
+        </MemoryRouter>
+      </AuthProvider>,
+    )
+
+    expect(await screen.findByRole('heading', { name: 'QA Engineer' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Editar' }))
+
+    const pipelineSelect = screen.getByDisplayValue('Pipeline Tech')
+    expect(pipelineSelect).toBeDisabled()
+
+    await userEvent.clear(screen.getByPlaceholderText('Titulo'))
+    await userEvent.type(screen.getByPlaceholderText('Titulo'), 'Senior QA Engineer')
+    await userEvent.clear(screen.getByPlaceholderText('Descripcion'))
+    await userEvent.type(screen.getByPlaceholderText('Descripcion'), 'Validar calidad de punta a punta.')
+    await userEvent.clear(screen.getByPlaceholderText('Ubicacion'))
+    await userEvent.type(screen.getByPlaceholderText('Ubicacion'), 'Hibrido')
+    await userEvent.clear(screen.getByPlaceholderText('Minimo salarial'))
+    await userEvent.type(screen.getByPlaceholderText('Minimo salarial'), '9500')
+    await userEvent.clear(screen.getByPlaceholderText('Maximo salarial'))
+    await userEvent.type(screen.getByPlaceholderText('Maximo salarial'), '12000')
+    await userEvent.selectOptions(screen.getByDisplayValue('Mensual'), 'annual')
+    await userEvent.selectOptions(screen.getByDisplayValue('GTQ'), 'USD')
+    await userEvent.selectOptions(screen.getByDisplayValue('open'), 'closed')
+    await userEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Vacante actualizada correctamente.')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Senior QA Engineer' })).toBeInTheDocument()
+      expect(screen.getByText('Cerrada')).toBeInTheDocument()
+      expect(screen.getByText('$ 9,500 - $ 12,000 / año')).toBeInTheDocument()
+    })
+  })
+
+  it('closes and unpublishes a position with applications when deleting it', async () => {
+    seedSession()
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'open', is_public: true }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 3, name: 'Pipeline Tech', is_default: true, stages: [{ id: 8, name: 'Aplicado', order_index: 1 }] }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 22, position_id: 9, candidate_id: 7, current_stage_id: 8, notes: 'CV recibido', candidate: { id: 7, full_name: 'Ana Perez', email: 'ana@example.com' }, current_stage: { id: 8, name: 'Aplicado', order_index: 1 } }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 9, title: 'QA Engineer', description: 'Validar calidad.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'closed', is_public: false }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'closed', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+
+    render(
+      <AuthProvider>
+        <MemoryRouter>
+          <PositionsPage />
+        </MemoryRouter>
+      </AuthProvider>,
+    )
+
+    expect(await screen.findByRole('heading', { name: 'QA Engineer' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Eliminar' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('La vacante tenia postulaciones; se cerro y se retiro del portal.')).toBeInTheDocument()
+      expect(screen.getByText('Cerrada')).toBeInTheDocument()
     })
   })
 
@@ -167,7 +248,7 @@ describe('frontend business pages', () => {
     seedSession()
     globalThis.fetch = vi
       .fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad.', location: 'Remoto', pipeline_id: 3, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 9, title: 'QA Engineer', description: 'Validar calidad.', location: 'Remoto', salary_min: 7000, salary_max: 9000, salary_frequency: 'monthly', salary_currency: 'GTQ', pipeline_id: 3, status: 'open', is_public: false }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 3, name: 'Pipeline Tech', is_default: true, stages: [{ id: 8, name: 'Aplicado', order_index: 1 }, { id: 9, name: 'Entrevista', order_index: 2 }] }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 22, position_id: 9, candidate_id: 7, current_stage_id: 8, notes: 'CV recibido', candidate: { id: 7, full_name: 'Ana Perez', email: 'ana@example.com' }, current_stage: { id: 8, name: 'Aplicado', order_index: 1 } }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 22, current_stage_id: 9 }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
@@ -195,12 +276,13 @@ describe('frontend business pages', () => {
   it('loads public jobs and submits an application', async () => {
     globalThis.fetch = vi
       .fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 7, title: 'Fullstack Developer', description: 'Portal y backend', location: 'Remoto' }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 7, title: 'Fullstack Developer', description: 'Portal y backend', location: 'Remoto', salary_min: 12000, salary_max: 18000, salary_frequency: 'annual', salary_currency: 'USD' }]), { status: 200, headers: { 'Content-Type': 'application/json' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 99 }), { status: 201, headers: { 'Content-Type': 'application/json' } }))
 
     render(<PublicJobsPage />)
 
     expect(await screen.findByRole('button', { name: /fullstack developer/i })).toBeInTheDocument()
+    expect(screen.getByText('$ 12,000 - $ 18,000 / año')).toBeInTheDocument()
 
     await userEvent.type(screen.getByPlaceholderText('Nombre completo'), 'Paula Diaz')
     await userEvent.type(screen.getByPlaceholderText('Correo'), 'paula@example.com')

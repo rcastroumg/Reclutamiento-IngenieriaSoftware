@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session, selectinload
 
@@ -45,6 +45,7 @@ from schemas.recruitment import (
     PositionCreate,
     PositionApplicationRead,
     PositionRead,
+    PositionUpdate,
     QuestionnaireAssignmentCreate,
     QuestionnaireAssignmentRead,
     QuestionnaireCreate,
@@ -121,6 +122,10 @@ def create_position(
         title=payload.title,
         description=payload.description,
         location=payload.location,
+        salary_min=payload.salary_min,
+        salary_max=payload.salary_max,
+        salary_frequency=payload.salary_frequency,
+        salary_currency=payload.salary_currency,
         status=payload.status,
     )
     db.add(position)
@@ -135,6 +140,56 @@ def list_positions(
     db: Session = Depends(get_db),
 ) -> list[Position]:
     return db.query(Position).filter(Position.company_id == membership.company_id).order_by(Position.id.asc()).all()
+
+
+@router.patch("/positions/{position_id}", response_model=PositionRead)
+def update_position(
+    position_id: int,
+    payload: PositionUpdate,
+    membership: UserCompanyMembership = Depends(get_active_membership),
+    db: Session = Depends(get_db),
+) -> Position:
+    position = db.query(Position).filter(Position.id == position_id, Position.company_id == membership.company_id).first()
+    if position is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Position not found in active company")
+
+    position.title = payload.title
+    position.description = payload.description
+    position.location = payload.location
+    position.salary_min = payload.salary_min
+    position.salary_max = payload.salary_max
+    position.salary_frequency = payload.salary_frequency
+    position.salary_currency = payload.salary_currency
+    position.status = payload.status
+    if payload.status == PositionStatus.closed:
+        position.is_public = False
+
+    db.commit()
+    db.refresh(position)
+    return position
+
+
+@router.delete("/positions/{position_id}", status_code=status.HTTP_200_OK)
+def delete_position(
+    position_id: int,
+    membership: UserCompanyMembership = Depends(get_active_membership),
+    db: Session = Depends(get_db),
+):
+    position = db.query(Position).filter(Position.id == position_id, Position.company_id == membership.company_id).first()
+    if position is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Position not found in active company")
+
+    has_applications = db.query(Application.id).filter(Application.position_id == position.id).first() is not None
+    if not has_applications:
+        db.delete(position)
+        db.commit()
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    position.status = PositionStatus.closed
+    position.is_public = False
+    db.commit()
+    db.refresh(position)
+    return position
 
 
 @router.get("/positions/{position_id}/applications", response_model=list[PositionApplicationRead])
@@ -167,6 +222,8 @@ def publish_position(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Position not found in active company")
     if position.status != PositionStatus.open:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only open positions can be published")
+    if position.salary_min <= 0 or position.salary_max < position.salary_min:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Salary range must be defined before publishing")
 
     position.is_public = True
     db.commit()
@@ -604,7 +661,12 @@ def list_application_notifications(
 def list_public_jobs(db: Session = Depends(get_db)) -> list[Position]:
     return (
         db.query(Position)
-        .filter(Position.is_public.is_(True), Position.status == PositionStatus.open)
+        .filter(
+            Position.is_public.is_(True),
+            Position.status == PositionStatus.open,
+            Position.salary_min > 0,
+            Position.salary_max >= Position.salary_min,
+        )
         .order_by(Position.id.asc())
         .all()
     )
@@ -614,7 +676,13 @@ def list_public_jobs(db: Session = Depends(get_db)) -> list[Position]:
 def get_public_job(position_id: int, db: Session = Depends(get_db)) -> Position:
     position = (
         db.query(Position)
-        .filter(Position.id == position_id, Position.is_public.is_(True), Position.status == PositionStatus.open)
+        .filter(
+            Position.id == position_id,
+            Position.is_public.is_(True),
+            Position.status == PositionStatus.open,
+            Position.salary_min > 0,
+            Position.salary_max >= Position.salary_min,
+        )
         .first()
     )
     if position is None:
@@ -627,7 +695,13 @@ def apply_to_public_job(position_id: int, payload: PublicApplicationCreate, db: 
     position = (
         db.query(Position)
         .options(selectinload(Position.pipeline).selectinload(Pipeline.stages))
-        .filter(Position.id == position_id, Position.is_public.is_(True), Position.status == PositionStatus.open)
+        .filter(
+            Position.id == position_id,
+            Position.is_public.is_(True),
+            Position.status == PositionStatus.open,
+            Position.salary_min > 0,
+            Position.salary_max >= Position.salary_min,
+        )
         .first()
     )
     if position is None:
